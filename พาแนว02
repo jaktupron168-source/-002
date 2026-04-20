@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mod Menu Panel with Credit</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; padding: 0; background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        .panel {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            width: 320px;
+            border-radius: 12px;
+            padding: 25px 20px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.8);
+            border: 2px solid #4ca1af;
+            text-align: center;
+            position: relative;
+        }
+        .hidden { display: none !important; }
+        h2 { margin-top: 0; color: #fff; text-shadow: 1px 1px 2px black; }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%; margin: 10px 0; padding: 12px; border-radius: 6px; border: 1px solid #aaa;
+            font-size: 16px; text-align: center; background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        button {
+            width: 100%; margin: 10px 0; padding: 12px; border-radius: 6px; border: none;
+            font-size: 16px; font-weight: bold; color: white; cursor: pointer; transition: 0.3s;
+        }
+        .btn-follow { background-color: #ff0050; }
+        .btn-enter { background-color: #008CBA; }
+        .btn-login { background-color: #4CAF50; }
+
+        .menu-item {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 12px 0; background: rgba(0, 0, 0, 0.4); padding: 10px 15px;
+            border-radius: 8px; border-left: 4px solid #4ca1af;
+        }
+        .menu-text { font-size: 16px; font-weight: bold; }
+
+        /* ส่วนของเครดิตที่เพิ่มมา */
+        .credit-box {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 13px;
+            color: #4ca1af;
+            font-weight: bold;
+            text-shadow: 0px 0px 5px rgba(76, 161, 175, 0.5);
+        }
+
+        /* ปุ่มสวิตช์ */
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #4CAF50; }
+        input:checked + .slider:before { transform: translateX(22px); }
+    </style>
+</head>
+<body>
+
+    <div id="step1-unlock" class="panel">
+        <h2>🔒 ปลดล็อคพาแนล</h2>
+        <button class="btn-follow" onclick="goToTikTok()">กดติดตาม</button>
+        <button class="btn-enter" onclick="checkUnlock()">เข้าใช้พาแนล</button>
+    </div>
+
+    <div id="step2-login" class="panel hidden">
+        <h2>🔑 เข้าสู่ระบบ</h2>
+        <input type="text" id="userInput" placeholder="Username">
+        <input type="password" id="passInput" placeholder="Password">
+        <button class="btn-login" onclick="verifyLogin()">Login</button>
+    </div>
+
+    <div id="step3-menu" class="panel hidden">
+        <h2>⚙️ Mod Menu</h2>
+        
+        <div class="menu-item"><span class="menu-text">ดูดหัว 67%</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="menu-item"><span class="menu-text">ล็อกหัว 15%</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="menu-item"><span class="menu-text">กันแบน</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="menu-item"><span class="menu-text">กันดำ</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="menu-item"><span class="menu-text">ช่วยลาก 46%</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+
+        <div class="credit-box">
+            เครดิตพาแนว : king_rooster002
+        </div>
+    </div>
+
+    <script>
+        let hasFollowed = false;
+        function goToTikTok() {
+            window.open("https://www.tiktok.com/@king_rooster002", "_blank");
+            hasFollowed = true; 
+        }
+        function checkUnlock() {
+            if (hasFollowed) {
+                document.getElementById("step1-unlock").classList.add("hidden");
+                document.getElementById("step2-login").classList.remove("hidden");
+            } else {
+                alert("❌ กรุณากดติดตามก่อนครับ!");
+            }
+        }
+        function verifyLogin() {
+            let user = document.getElementById("userInput").value;
+            let pass = document.getElementById("passInput").value;
+            if (user === "MOD" && pass === "OPS") {
+                document.getElementById("step2-login").classList.add("hidden");
+                document.getElementById("step3-menu").classList.remove("hidden");
+            } else {
+                alert("❌ รหัสไม่ถูกต้อง!");
+            }
+        }
+    </script>
+
+</body>
+</html>
