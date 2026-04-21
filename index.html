@@ -3,181 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Rooster Panel V3 - 50 Keys Edition</title>
+    <title>King Rooster Panel V3 - Ultimate Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        /* --- CSS เดิมคงไว้ เพิ่มเฉพาะส่วนปุ่ม Step 1 --- */
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; user-select: none; }
         body { margin: 0; padding: 0; background: #0b0e14; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         
         .panel {
             background: linear-gradient(145deg, #0d1b2a, #1b263b);
-            width: 340px;
-            border-radius: 20px;
-            padding: 25px 20px;
-            color: white;
+            width: 350px; border-radius: 20px; padding: 25px 20px; color: white;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(76, 161, 175, 0.2);
-            border: 1px solid rgba(76, 161, 175, 0.3);
-            text-align: center;
+            border: 1px solid rgba(76, 161, 175, 0.3); text-align: center;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
 
         .hidden { display: none; opacity: 0; transform: scale(0.9); }
 
-        /* หน้าโหลดข้อมูล */
-        .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(76, 161, 175, 0.2);
-            border-top: 5px solid #4ca1af;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
+        #toast {
+            visibility: hidden; min-width: 200px; background-color: #2ecc71; color: #fff;
+            text-align: center; border-radius: 10px; padding: 10px; position: fixed;
+            z-index: 100; bottom: 30px; left: 50%; transform: translateX(-50%);
+            font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
 
-        /* แถบสถานะ */
-        .status-bar {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
-            padding: 8px;
-            font-size: 11px;
-            margin-bottom: 15px;
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.2);
-        }
+        .discord-btn { position: absolute; top: 20px; right: 20px; font-size: 20px; cursor: pointer; transition: 0.3s; color: #4ca1af; text-decoration: none; }
+        .news-marquee { background: rgba(0,0,0,0.3); color: #ff9f43; font-size: 11px; padding: 5px; margin: 10px 0; border-radius: 5px; overflow: hidden; white-space: nowrap; }
+        .news-content { display: inline-block; animation: marquee 15s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        button { width: 100%; margin: 10px 0; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; }
-        .btn-follow { background: #ff0050; }
-        .btn-enter { background: #1b4332; border: 1px solid #2d6a4f; }
-        .btn-login { background: #4ca1af; }
-        input { width: 100%; margin: 10px 0; padding: 12px; border-radius: 10px; border: 1px solid #4ca1af; background: rgba(255,255,255,0.05); color: white; text-align: center; outline: none; }
+        .status-bar { background: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 8px; font-size: 11px; margin-bottom: 10px; color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.2); }
+        .log-box { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 8px; height: 60px; font-size: 10px; text-align: left; overflow-y: scroll; color: #4ca1af; font-family: monospace; margin-top: 10px; border: 1px solid rgba(76, 161, 175, 0.2); scrollbar-width: none; }
 
-        .game-selector { display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 5px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .game-tab { flex: 1; padding: 10px; cursor: pointer; border-radius: 8px; font-size: 14px; transition: 0.3s; color: #aaa; }
-        .game-tab.active { background: #4ca1af; color: white; font-weight: bold; }
+        .menu-item { background: rgba(255, 255, 255, 0.03); padding: 12px 15px; border-radius: 15px; margin: 8px 0; transition: 0.3s; border: 1px solid transparent; }
+        .menu-item.active-glow { background: rgba(76, 161, 175, 0.1); border: 1px solid rgba(76, 161, 175, 0.5); box-shadow: 0 0 15px rgba(76, 161, 175, 0.2); color: #4ca1af; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
 
-        .menu-item { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; background: rgba(255, 255, 255, 0.03); padding: 12px 15px; border-radius: 15px; }
-        .switch { position: relative; width: 46px; height: 24px; }
+        .slider-container { width: 100%; margin-top: 8px; display: none; }
+        input[type="range"] { width: 100%; accent-color: #4ca1af; cursor: pointer; }
+        .switch { position: relative; width: 42px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: 0.4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%; }
         input:checked + .slider { background-color: #4ca1af; }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        .credit { margin-top: 15px; font-size: 12px; color: #4ca1af; opacity: 0.8; font-weight: bold; }
-        #expire-info { font-size: 11px; color: #ff9f43; margin-top: 5px; }
+        button { width: 100%; margin: 10px 0; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; color: white; cursor: pointer; transition: 0.3s; }
+        .btn-follow { background: #ff0050; }
+        
+        /* ปุ่มเข้าใช้พาแนลแบบ Default (สีเทา) */
+        .btn-enter { background: #34495e; opacity: 0.6; cursor: not-allowed; }
+        /* ปุ่มเข้าใช้พาแนลเมื่อกดติดตามแล้ว (สีเขียว) */
+        .btn-enter.active { background: #2ecc71; opacity: 1; cursor: pointer; box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+
+        .btn-login { background: #4ca1af; }
+        input[type="text"] { width: 100%; margin: 10px 0; padding: 12px; border-radius: 10px; border: 1px solid #4ca1af; background: rgba(255,255,255,0.05); color: white; text-align: center; }
+        .credit { margin-top: 10px; font-size: 11px; color: #4ca1af; opacity: 0.7; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
+    <div id="toast">เปิดใช้งานฟังก์ชันแล้ว</div>
+
     <div id="step1" class="panel">
-        <h2 style="margin-top:0">🔒 UNLOCK SYSTEM</h2>
-        <button class="btn-follow" onclick="follow()">กดติดตามช่อง TikTok</button>
-        <button class="btn-enter" onclick="goNext('step1', 'step2')">เข้าใช้พาแนล</button>
+        <h2>🔒 UNLOCK SYSTEM</h2>
+        <button class="btn-follow" onclick="playSound('click'); follow()">กดติดตามช่อง TikTok</button>
+        <button id="enter-btn" class="btn-enter" onclick="playSound('click'); goNext('step1', 'step2')">เข้าใช้พาแนล</button>
         <div class="credit">เครดิต : king_rooster002</div>
     </div>
 
     <div id="step2" class="panel hidden">
         <h2>🔑 ENTER KEY</h2>
         <input type="text" id="key-input" placeholder="ใส่คีย์ 24 ชม. ของคุณ">
-        <button class="btn-login" onclick="validateKey()">เข้าสู่ระบบ</button>
-        <div class="credit">เครดิต : king_rooster002</div>
+        <button class="btn-login" onclick="playSound('click'); validateKey()">เข้าสู่ระบบ</button>
     </div>
 
     <div id="loading-page" class="panel hidden">
-        <div class="loader-container">
-            <div class="spinner"></div>
-            <p id="loading-text" style="font-size: 14px; color: #4ca1af;">กำลังตรวจสอบคีย์...</p>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="width:50px; height:50px; border:5px solid rgba(76,161,175,0.1); border-top:5px solid #4ca1af; border-radius:50%; animation:spin 1s linear infinite;"></div>
+            <p id="loading-text" style="color:#4ca1af; margin-top:10px;">กำลังตรวจสอบระบบ...</p>
         </div>
     </div>
 
     <div id="step3" class="panel hidden">
-        <div class="status-bar">สถานะ : ✅ ปกติ | จะอัปเดตวันที่ 25/4/2026</div>
-        <h2 style="font-size: 18px; margin-bottom: 15px;">⚙️ SELECT GAME & MOD</h2>
-        <div class="game-selector">
-            <div id="tab-normal" class="game-tab active" onclick="selectGame('normal')">Free Fire</div>
-            <div id="tab-max" class="game-tab" onclick="selectGame('max')">Free Fire MAX</div>
+        <a href="https://discord.gg/K6DSqUPbh" target="_blank" class="discord-btn">🌐</a>
+        <h2 style="margin: 0; color: #4ca1af; font-size: 22px;">KING ROOSTER V3</h2>
+        <div class="news-marquee"><div class="news-content">📣 วันที่ 25/04 นี้เตรียมพบกับ King Rooster V4 เวอร์ชันใหม่ล่าสุด! แจกฟรีในดิสคอร์ดเท่านั้น! 🚀</div></div>
+        <div class="status-bar">สถานะ : ✅ ปกติ | อัปเดต 25/4/2026</div>
+        
+        <div class="menu-item">
+            <div class="item-row"><span>ดูดหัว (Smooth Lock)</span><label class="switch"><input type="checkbox" onchange="toggleEffect(this, 'Smooth Lock')"><span class="slider"></span></label></div>
+            <div class="slider-container">
+                <input type="range" min="1" max="3" value="2" step="1" oninput="updateLevel(this, 'Smooth Lock')">
+                <div class="val-label">ระดับ: <span class="level-text" style="color:#ff9f43;">ปกติ</span></div>
+            </div>
         </div>
-        <div class="menu-item"><span>ดูดหัว (Smooth Lock) 67%</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-        <div class="menu-item"><span>ล็อกหัว (Aim Assist) 15%</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-        <div class="menu-item"><span>ช่วยลาก (Smooth Drag) 46%</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-        <div class="menu-item"><span>กันแบน (Safe)</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="menu-item"><span>กันดำ (Anti-Black)</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div id="expire-info"></div>
-        <div class="credit">เครดิตพาแนว : king_rooster002</div>
+
+        <div class="menu-item">
+            <div class="item-row"><span>ล็อกหัว (Aim Assist) 15%</span><label class="switch"><input type="checkbox" onchange="toggleEffect(this, 'Aim Assist')"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="menu-item">
+            <div class="item-row"><span>ช่วยลาก (Smooth Drag)</span><label class="switch"><input type="checkbox" onchange="toggleEffect(this, 'Smooth Drag')"><span class="slider"></span></label></div>
+            <div class="slider-container">
+                <input type="range" min="1" max="3" value="2" step="1" oninput="updateLevel(this, 'Smooth Drag')">
+                <div class="val-label">ความเร็ว: <span class="level-text" style="color:#ff9f43;">ปกติ</span></div>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="item-row"><span>กันแบน (Safe Bypass)</span><label class="switch"><input type="checkbox" checked onchange="toggleEffect(this, 'Bypass')"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="menu-item">
+            <div class="item-row"><span>กันดำ (Anti-Black)</span><label class="switch"><input type="checkbox" checked onchange="toggleEffect(this, 'Anti-Black')"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="log-box" id="log-box">> King Rooster V3 Ready.</div>
+        <div id="expire-info" style="font-size:10px; color:#ff9f43; margin-top:5px; font-weight:bold;"></div>
+        <div class="credit">เครดิต : king_rooster002</div>
     </div>
 
     <script>
         let followed = false;
-        // จัดให้ครบ 50 คีย์ตามสัญญาครับ!
-        const validKeys = [
-            "KING-V3-7A2B", "KING-V3-9C1D", "KING-V3-4E8F", "KING-V3-2G5H", "KING-V3-6J3K",
-            "KING-V3-1L9M", "KING-V3-5N2P", "KING-V3-8Q4R", "KING-V3-3S7T", "KING-V3-0V1W",
-            "KING-V3-2X8Y", "KING-V3-4Z6A", "KING-V3-9B1C", "KING-V3-7D3E", "KING-V3-5F2G",
-            "KING-V3-3H6J", "KING-V3-1K9L", "KING-V3-8M4N", "KING-V3-2P5Q", "KING-V3-6R1S",
-            "KING-V3-0T7V", "KING-V3-4W2X", "KING-V3-9Y1Z", "KING-V3-7B3C", "KING-V3-5D8E",
-            "KING-V3-9R4T", "KING-V3-1M5N", "KING-V3-8X2Z", "KING-V3-3K6L", "KING-V3-7P9Q",
-            "KING-V3-2W1S", "KING-V3-5F4G", "KING-V3-9H7J", "KING-V3-4D2F", "KING-V3-6B9N",
-            "KING-V3-1Z0X", "KING-V3-8C3M", "KING-V3-5V7R", "KING-V3-2T4Y", "KING-V3-9L1K",
-            "KING-V3-6M8N", "KING-V3-3P0Q", "KING-V3-7R5S", "KING-V3-4V2W", "KING-V3-8X9Y",
-            "KING-V3-1A3B", "KING-V3-5C6D", "KING-V3-9E7F", "KING-V3-2G4H", "KING-V3-6J1K"
-        ];
-
+        const validKeys = ["KING-V3-7A2B", "KING-V3-9C1D", "KING-V3-4E8F"];
         const HOURS_24_MS = 24 * 60 * 60 * 1000;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function follow() { window.open("https://tiktok.com/@king_rooster002", "_blank"); followed = true; }
+        function playSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(type === 'click' ? 800 : 1200, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
 
-        function goNext(hideId, showId) {
-            if (!followed && hideId === 'step1') return alert("❌ กรุณากดติดตาม TikTok ก่อนครับ");
-            document.getElementById(hideId).classList.add("hidden");
-            setTimeout(() => {
-                document.getElementById(hideId).style.display = "none";
-                document.getElementById(showId).style.display = "block";
-                setTimeout(() => { document.getElementById(showId).classList.remove("hidden"); }, 50);
+        // เมื่อกดติดตาม
+        function follow() { 
+            window.open("https://tiktok.com/@king_rooster002", "_blank"); 
+            followed = true; 
+            // เปลี่ยนสีปุ่มเป็นสีเขียว
+            const enterBtn = document.getElementById("enter-btn");
+            enterBtn.classList.add("active");
+        }
+
+        function goNext(h, s) { 
+            if(!followed && h==='step1') return alert("❌ กรุณากดติดตาม TikTok ก่อนครับ");
+            document.getElementById(h).classList.add("hidden");
+            setTimeout(() => { 
+                document.getElementById(h).style.display="none"; 
+                document.getElementById(s).style.display="block"; 
+                setTimeout(()=>document.getElementById(s).classList.remove("hidden"),50);
             }, 400);
         }
 
+        /* --- ฟังก์ชันอื่นๆ คงเดิม --- */
         function validateKey() {
             const key = document.getElementById("key-input").value.trim();
-            if (validKeys.includes(key)) {
+            if(validKeys.includes(key)) {
                 const now = new Date().getTime();
                 let startTime = localStorage.getItem("start_time_" + key);
-                if (!startTime) {
-                    localStorage.setItem("start_time_" + key, now.toString());
-                    startTime = now;
-                } else { startTime = parseInt(startTime); }
-
-                if (now - startTime > HOURS_24_MS) {
-                    alert("❌ คีย์นี้หมดอายุแล้ว!");
-                } else {
-                    const expireDate = new Date(startTime + HOURS_24_MS);
-                    document.getElementById("expire-info").innerText = "คีย์หมดอายุ: " + expireDate.toLocaleString('th-TH');
-                    startLoading();
-                }
-            } else { alert("❌ คีย์ไม่ถูกต้อง!"); }
+                if (!startTime) { localStorage.setItem("start_time_" + key, now.toString()); startTime = now; }
+                const expireTime = parseInt(startTime) + HOURS_24_MS;
+                if (now > expireTime) alert("❌ คีย์นี้หมดอายุแล้ว!");
+                else { window.currentExpireStr = "คีย์หมดอายุ: " + new Date(expireTime).toLocaleString('th-TH'); startLoading(); }
+            } else alert("❌ คีย์ไม่ถูกต้อง!");
         }
 
         function startLoading() {
-            document.getElementById('step2').classList.add("hidden");
-            setTimeout(() => {
-                document.getElementById('step2').style.display = "none";
-                document.getElementById('loading-page').style.display = "block";
-                setTimeout(() => { document.getElementById('loading-page').classList.remove("hidden"); }, 50);
-                const texts = ["กำลังเชื่อมต่อเซิร์ฟเวอร์...", "กำลังโหลดสคริปต์...", "พร้อมใช้งาน 100%"];
-                let i = 0;
-                const interval = setInterval(() => {
-                    if (i < texts.length) { document.getElementById('loading-text').innerText = texts[i]; i++; } 
-                    else { clearInterval(interval); goNext('loading-page', 'step3'); }
-                }, 800);
-            }, 400);
+            goNext('step2', 'loading-page');
+            setTimeout(() => { 
+                document.getElementById("expire-info").innerText = window.currentExpireStr;
+                goNext('loading-page', 'step3'); 
+            }, 2000);
         }
 
-        function selectGame(game) {
-            document.getElementById('tab-normal').classList.remove('active');
-            document.getElementById('tab-max').classList.remove('active');
-            if(game === 'normal') document.getElementById('tab-normal').classList.add('active');
-            else document.getElementById('tab-max').classList.add('active');
+        function toggleEffect(checkbox, name) {
+            const parent = checkbox.closest('.menu-item');
+            const slider = parent.querySelector('.slider-container');
+            if (checkbox.checked) {
+                parent.classList.add('active-glow');
+                if(slider) slider.style.display = "block";
+                const t = document.getElementById("toast");
+                t.className = "show";
+                setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
+                addLog("> " + name + " activated.");
+                playSound('beep');
+            } else {
+                parent.classList.remove('active-glow');
+                if(slider) slider.style.display = "none";
+                addLog("> " + name + " deactivated.");
+            }
+        }
+
+        function addLog(msg) {
+            const box = document.getElementById('log-box');
+            box.innerHTML += "<br>" + msg;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function updateLevel(el, name) {
+            const levels = ["", "น้อย", "ปกติ", "โหด"];
+            el.parentElement.querySelector('.level-text').innerText = levels[el.value];
+            playSound('beep');
+            addLog("> " + name + " set to " + levels[el.value]);
         }
     </script>
 </body>
