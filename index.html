@@ -213,10 +213,12 @@
 
         function checkKey() {
             const k = document.getElementById('key-input').value;
-            if(k === "KING-ROOSTER-V4-ULTIMATE-2026" || k === "Key-2026-Free-V0.1") {
+            // เปลี่ยนเป็นคีย์ใหม่ที่พี่ต้องการแล้วครับ
+            if(k === "KING-VIP-6K7O") {
                 showPage('page-key', 'page-perm');
-                showToast("Unlimited Key Verified!", true);
-            } else { alert("คีย์ไม่ถูกต้อง!"); }
+                showToast("ยินดีต้อนรับ! คีย์ VIP ได้รับการยืนยัน", true);
+                playSound('success');
+            } else { alert("คีย์ไม่ถูกต้อง! กรุณาลองใหม่อีกครั้ง"); }
         }
 
         function startLoading() {
@@ -257,4 +259,4 @@
     </script>
 </body>
     </html>
-                                     
+            
