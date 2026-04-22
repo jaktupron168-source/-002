@@ -3,218 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Rooster Panel V3 - Ultimate Edition</title>
+    <title>KING ROOSTER V4 - ULTIMATE EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS เดิมคงไว้ เพิ่มเฉพาะส่วนปุ่ม Step 1 --- */
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; user-select: none; }
-        body { margin: 0; padding: 0; background: #0b0e14; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        body { margin: 0; padding: 0; background: #0b0e14; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; overflow: hidden; }
         
-        .panel {
-            background: linear-gradient(145deg, #0d1b2a, #1b263b);
-            width: 350px; border-radius: 20px; padding: 25px 20px; color: white;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(76, 161, 175, 0.2);
-            border: 1px solid rgba(76, 161, 175, 0.3); text-align: center;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
+        .panel { 
+            background: linear-gradient(145deg, #0d1b2a, #1b263b); 
+            width: 360px; border-radius: 20px; padding: 25px 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+            border: 1px solid rgba(76, 161, 175, 0.3); text-align: center; position: relative; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .hidden { display: none; opacity: 0; transform: scale(0.9); }
-
-        #toast {
-            visibility: hidden; min-width: 200px; background-color: #2ecc71; color: #fff;
-            text-align: center; border-radius: 10px; padding: 10px; position: fixed;
-            z-index: 100; bottom: 30px; left: 50%; transform: translateX(-50%);
-            font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        /* 🌈 โหมด ขอบไฟสายรุ้ง (RGB) */
+        @keyframes rgbGlow {
+            0% { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
+            33% { box-shadow: 0 0 20px #00ff00; border-color: #00ff00; }
+            66% { box-shadow: 0 0 20px #0000ff; border-color: #0000ff; }
+            100% { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
         }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        .rgb-active { animation: rgbGlow 3s linear infinite !important; }
 
-        .discord-btn { position: absolute; top: 20px; right: 20px; font-size: 20px; cursor: pointer; transition: 0.3s; color: #4ca1af; text-decoration: none; }
-        .news-marquee { background: rgba(0,0,0,0.3); color: #ff9f43; font-size: 11px; padding: 5px; margin: 10px 0; border-radius: 5px; overflow: hidden; white-space: nowrap; }
-        .news-content { display: inline-block; animation: marquee 15s linear infinite; }
+        /* 🖥️ โหมด Laptop (ขนาดเล็ก) */
+        .laptop-mode { transform: scale(0.75); width: 320px !important; }
+        .laptop-mode .menu-item { padding: 10px !important; font-size: 13px; }
+        .laptop-mode h2 { font-size: 18px !important; }
+
+        .hidden { display: none !important; }
+
+        /* ปุ่มบนหัว */
+        .header-btn { position: absolute; top: 15px; background: rgba(0, 0, 0, 0.5); width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 20px; cursor: pointer; transition: 0.2s; z-index: 100; }
+        .discord-btn { right: 15px; color: #4ca1af; text-decoration: none; }
+        .laptop-btn { left: 15px; color: white; }
+
+        .status-container { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 5px; margin: 10px 0 15px 0; overflow: hidden; white-space: nowrap; border: 1px solid rgba(46, 204, 113, 0.2); }
+        .status-text { display: inline-block; color: #2ecc71; font-size: 11.5px; animation: marquee 15s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .status-bar { background: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 8px; font-size: 11px; margin-bottom: 10px; color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.2); }
-        .log-box { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 8px; height: 60px; font-size: 10px; text-align: left; overflow-y: scroll; color: #4ca1af; font-family: monospace; margin-top: 10px; border: 1px solid rgba(76, 161, 175, 0.2); scrollbar-width: none; }
+        button { width: 100%; margin: 10px 0; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-follow { background: #ff0050; color: white; }
+        .btn-enter { background: #34495e; color: rgba(255,255,255,0.3); pointer-events: none; }
+        .btn-enter.unlocked { background: #2ecc71; color: white; pointer-events: auto; }
+        .btn-login { background: #4ca1af; color: white; }
+        .btn-allow { background: #2ecc71; color: white; }
 
-        .menu-item { background: rgba(255, 255, 255, 0.03); padding: 12px 15px; border-radius: 15px; margin: 8px 0; transition: 0.3s; border: 1px solid transparent; }
-        .menu-item.active-glow { background: rgba(76, 161, 175, 0.1); border: 1px solid rgba(76, 161, 175, 0.5); box-shadow: 0 0 15px rgba(76, 161, 175, 0.2); color: #4ca1af; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #4ca1af; background: rgba(0,0,0,0.2); color: white; text-align: center; }
 
-        .slider-container { width: 100%; margin-top: 8px; display: none; }
-        input[type="range"] { width: 100%; accent-color: #4ca1af; cursor: pointer; }
+        .load-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .load-bar-fill { width: 0%; height: 100%; background: #2ecc71; transition: 0.1s; }
+
+        .menu-item { background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 15px; margin: 10px 0 5px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .sub-menu { background: rgba(0, 0, 0, 0.3); margin-bottom: 15px; padding: 10px; border-radius: 0 0 15px 15px; border: 1px solid rgba(76, 161, 175, 0.2); display: flex; justify-content: space-around; }
+        .sub-btn { background: #2c3e50; border: none; color: white; padding: 5px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; }
+        .sub-btn.active { background: #e74c3c; box-shadow: 0 0 8px #e74c3c; }
+
         .switch { position: relative; width: 42px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: 0.4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #4ca1af; }
+        input:checked + .slider { background-color: #2ecc71; }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        button { width: 100%; margin: 10px 0; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; color: white; cursor: pointer; transition: 0.3s; }
-        .btn-follow { background: #ff0050; }
+        #matrix-log { font-family: monospace; font-size: 11px; color: #00ff00; text-align: left; height: 100px; background: rgba(0,0,0,0.5); padding: 10px; margin-bottom: 10px; border: 1px solid #00ff0033; overflow-y: auto; }
         
-        /* ปุ่มเข้าใช้พาแนลแบบ Default (สีเทา) */
-        .btn-enter { background: #34495e; opacity: 0.6; cursor: not-allowed; }
-        /* ปุ่มเข้าใช้พาแนลเมื่อกดติดตามแล้ว (สีเขียว) */
-        .btn-enter.active { background: #2ecc71; opacity: 1; cursor: pointer; box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+        .hwid-box { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; border: 1px dashed #4ca1af; font-size: 11px; color: #bdc3c7; margin-bottom: 15px; text-align: left; line-height: 1.5; }
+        .hwid-box span { color: #4ca1af; font-weight: bold; }
 
-        .btn-login { background: #4ca1af; }
-        input[type="text"] { width: 100%; margin: 10px 0; padding: 12px; border-radius: 10px; border: 1px solid #4ca1af; background: rgba(255,255,255,0.05); color: white; text-align: center; }
-        .credit { margin-top: 10px; font-size: 11px; color: #4ca1af; opacity: 0.7; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .credit { font-size: 11px; color: #4ca1af; margin-top: 15px; opacity: 0.7; }
+
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: rgba(13, 27, 42, 0.9); color: #2ecc71; border: 1px solid #2ecc71; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); animation: fadeInOut 2s forwards; }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(-20px); } 15% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } }
     </style>
 </head>
 <body>
 
-    <div id="toast">เปิดใช้งานฟังก์ชันแล้ว</div>
+    <div id="toast-container"></div>
 
-    <div id="step1" class="panel">
-        <h2>🔒 UNLOCK SYSTEM</h2>
-        <button class="btn-follow" onclick="playSound('click'); follow()">กดติดตามช่อง TikTok</button>
-        <button id="enter-btn" class="btn-enter" onclick="playSound('click'); goNext('step1', 'step2')">เข้าใช้พาแนล</button>
-        <div class="credit">เครดิต : king_rooster002</div>
+    <div id="page-tiktok" class="panel">
+        <h2 style="color: #ff0050;">🔐 UNLOCK V4</h2>
+        <button class="btn-follow" id="follow-btn" onclick="handleFollow()">กดติดตามช่อง TikTok</button>
+        <button class="btn-enter" id="enter-btn" onclick="showPage('page-tiktok', 'page-key')">เข้าใช้พาแนล</button>
+        <div class="credit">@king_rooster002</div>
     </div>
 
-    <div id="step2" class="panel hidden">
+    <div id="page-key" class="panel hidden">
         <h2>🔑 ENTER KEY</h2>
-        <input type="text" id="key-input" placeholder="ใส่คีย์ 24 ชม. ของคุณ">
-        <button class="btn-login" onclick="playSound('click'); validateKey()">เข้าสู่ระบบ</button>
-    </div>
-
-    <div id="loading-page" class="panel hidden">
-        <div style="display:flex; flex-direction:column; align-items:center;">
-            <div style="width:50px; height:50px; border:5px solid rgba(76,161,175,0.1); border-top:5px solid #4ca1af; border-radius:50%; animation:spin 1s linear infinite;"></div>
-            <p id="loading-text" style="color:#4ca1af; margin-top:10px;">กำลังตรวจสอบระบบ...</p>
+        <div class="hwid-box">
+            DEVICE: <span id="dev-name">Checking...</span><br>
+            HWID: <span id="dev-hwid">Checking...</span><br>
+            STATUS: <span style="color:#2ecc71;">SECURE ✅</span>
         </div>
+        <input type="text" id="key-input" placeholder="ใส่คีย์ของคุณ">
+        <button class="btn-login" onclick="checkKey()">ยืนยันคีย์</button>
     </div>
 
-    <div id="step3" class="panel hidden">
-        <a href="https://discord.gg/K6DSqUPbh" target="_blank" class="discord-btn">🌐</a>
-        <h2 style="margin: 0; color: #4ca1af; font-size: 22px;">KING ROOSTER V3</h2>
-        <div class="news-marquee"><div class="news-content">📣 วันที่ 25/04 นี้เตรียมพบกับ King Rooster V4 เวอร์ชันใหม่ล่าสุด! แจกฟรีในดิสคอร์ดเท่านั้น! 🚀</div></div>
-        <div class="status-bar">สถานะ : ✅ ปกติ | อัปเดต 25/4/2026</div>
+    <div id="page-perm" class="panel hidden">
+        <div style="font-size: 45px;">📁</div>
+        <h3>สิทธิ์การเข้าถึงไฟล์</h3>
+        <p style="font-size: 11px; color:#bdc3c7;">/Android/data/com.dts.freefireth/</p>
+        <button class="btn-allow" onclick="startLoading()">อนุญาต (Allow Access)</button>
+    </div>
+
+    <div id="page-loading" class="panel hidden">
+        <h3 style="color:#00ff00;">INSTALLING SYSTEM...</h3>
+        <div id="matrix-log"></div>
+        <div class="load-bar-bg"><div id="bar-1" class="load-bar-fill"></div></div>
+        <div id="pct-1" style="font-size: 18px; color:#00ff00; font-weight:bold;">0%</div>
+    </div>
+
+    <div id="page-netcheck" class="panel hidden">
+        <h3 id="net-status" style="color:#4ca1af;">ANALYZING SPEED...</h3>
+        <div id="net-desc" style="font-size: 12px; color:#bdc3c7;">เชื่อมต่อผ่าน: <span id="conn-type">...</span></div>
+        <div class="load-bar-bg"><div id="bar-2" class="load-bar-fill" style="background:#4ca1af;"></div></div>
+        <div id="pct-2" style="font-size: 18px; color:#4ca1af; font-weight:bold;">0%</div>
+        <div id="speed-label" style="font-size: 11px; margin-top: 5px;"></div>
+    </div>
+
+    <div id="page-menu" class="panel hidden">
+        <div class="header-btn laptop-btn" onclick="toggleLaptopMode()">🖥️</div>
+        <a href="https://discord.gg/K6DSqUPbh" target="_blank" class="header-btn discord-btn">🌐</a>
+
+        <h2 style="color: #4ca1af; margin: 0; font-size: 22px;">KING ROOSTER V4</h2>
+        <div class="status-container">
+            <div class="status-text">: สถานะ : ✅ : จะอัพเดทV5วันที่ : 25/4/2026 ติดตามข่าวสารได้ที่ทางดิสคอร์ด หรือ รูป🌐 ด้านบน</div>
+        </div>
         
+        <button style="background: #8e44ad; color: white; padding: 10px; margin-top:0;" onclick="toggleRGB()">🌈 เปิด/ปิด โหมด ขอบไฟสายรุ้ง (RGB)</button>
+
         <div class="menu-item">
-            <div class="item-row"><span>ดูดหัว (Smooth Lock)</span><label class="switch"><input type="checkbox" onchange="toggleEffect(this, 'Smooth Lock')"><span class="slider"></span></label></div>
-            <div class="slider-container">
-                <input type="range" min="1" max="3" value="2" step="1" oninput="updateLevel(this, 'Smooth Lock')">
-                <div class="val-label">ระดับ: <span class="level-text" style="color:#ff9f43;">ปกติ</span></div>
-            </div>
+            <span>ดูดหัว (Smooth Lock)</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ดูดหัว', this); toggleSub('aim-sub', this)"><span class="slider"></span></label>
+        </div>
+        <div id="aim-sub" class="sub-menu hidden">
+            <button class="sub-btn" onclick="setActive(this)">น้อย</button><button class="sub-btn active" onclick="setActive(this)">ปกติ</button><button class="sub-btn" onclick="setActive(this)">โหด</button>
         </div>
 
         <div class="menu-item">
-            <div class="item-row"><span>ล็อกหัว (Aim Assist) 15%</span><label class="switch"><input type="checkbox" onchange="toggleEffect(this, 'Aim Assist')"><span class="slider"></span></label></div>
+            <span>ช่วยลาก (Smooth Drag)</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ช่วยลาก', this); toggleSub('drag-sub', this)"><span class="slider"></span></label>
+        </div>
+        <div id="drag-sub" class="sub-menu hidden">
+            <button class="sub-btn" onclick="setActive(this)">น้อย</button><button class="sub-btn active" onclick="setActive(this)">ปกติ</button><button class="sub-btn" onclick="setActive(this)">โหด</button>
         </div>
 
-        <div class="menu-item">
-            <div class="item-row"><span>ช่วยลาก (Smooth Drag)</span><label class="switch"><input type="checkbox" onchange="toggleEffect(this, 'Smooth Drag')"><span class="slider"></span></label></div>
-            <div class="slider-container">
-                <input type="range" min="1" max="3" value="2" step="1" oninput="updateLevel(this, 'Smooth Drag')">
-                <div class="val-label">ความเร็ว: <span class="level-text" style="color:#ff9f43;">ปกติ</span></div>
-            </div>
-        </div>
+        <div class="menu-item"><span>ล็อกหัว (Aim Assist) 5%</span><label class="switch"><input type="checkbox" onchange="toggleFeature('ล็อกหัว 5%', this)"><span class="slider"></span></label></div>
+        <div class="menu-item"><span>กันดำ (Anti-Blacklist)</span><label class="switch"><input type="checkbox" onchange="toggleFeature('กันดำ', this)"><span class="slider"></span></label></div>
+        <div class="menu-item"><span>กันแบน (Safe Bypass)</span><label class="switch"><input type="checkbox" checked onchange="toggleFeature('กันแบน', this)"><span class="slider"></span></label></div>
 
-        <div class="menu-item">
-            <div class="item-row"><span>กันแบน (Safe Bypass)</span><label class="switch"><input type="checkbox" checked onchange="toggleEffect(this, 'Bypass')"><span class="slider"></span></label></div>
-        </div>
-
-        <div class="menu-item">
-            <div class="item-row"><span>กันดำ (Anti-Black)</span><label class="switch"><input type="checkbox" checked onchange="toggleEffect(this, 'Anti-Black')"><span class="slider"></span></label></div>
-        </div>
-
-        <div class="log-box" id="log-box">> King Rooster V3 Ready.</div>
-        <div id="expire-info" style="font-size:10px; color:#ff9f43; margin-top:5px; font-weight:bold;"></div>
         <div class="credit">เครดิต : king_rooster002</div>
     </div>
 
     <script>
-        let followed = false;
-        const validKeys = ["KING-V3-7A2B", "KING-V3-9C1D", "KING-V3-4E8F"];
-        const HOURS_24_MS = 24 * 60 * 60 * 1000;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
         function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.setValueAtTime(type === 'click' ? 800 : 1200, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        // เมื่อกดติดตาม
-        function follow() { 
-            window.open("https://tiktok.com/@king_rooster002", "_blank"); 
-            followed = true; 
-            // เปลี่ยนสีปุ่มเป็นสีเขียว
-            const enterBtn = document.getElementById("enter-btn");
-            enterBtn.classList.add("active");
-        }
-
-        function goNext(h, s) { 
-            if(!followed && h==='step1') return alert("❌ กรุณากดติดตาม TikTok ก่อนครับ");
-            document.getElementById(h).classList.add("hidden");
-            setTimeout(() => { 
-                document.getElementById(h).style.display="none"; 
-                document.getElementById(s).style.display="block"; 
-                setTimeout(()=>document.getElementById(s).classList.remove("hidden"),50);
-            }, 400);
-        }
-
-        /* --- ฟังก์ชันอื่นๆ คงเดิม --- */
-        function validateKey() {
-            const key = document.getElementById("key-input").value.trim();
-            if(validKeys.includes(key)) {
-                const now = new Date().getTime();
-                let startTime = localStorage.getItem("start_time_" + key);
-                if (!startTime) { localStorage.setItem("start_time_" + key, now.toString()); startTime = now; }
-                const expireTime = parseInt(startTime) + HOURS_24_MS;
-                if (now > expireTime) alert("❌ คีย์นี้หมดอายุแล้ว!");
-                else { window.currentExpireStr = "คีย์หมดอายุ: " + new Date(expireTime).toLocaleString('th-TH'); startLoading(); }
-            } else alert("❌ คีย์ไม่ถูกต้อง!");
-        }
-
-        function startLoading() {
-            goNext('step2', 'loading-page');
-            setTimeout(() => { 
-                document.getElementById("expire-info").innerText = window.currentExpireStr;
-                goNext('loading-page', 'step3'); 
-            }, 2000);
-        }
-
-        function toggleEffect(checkbox, name) {
-            const parent = checkbox.closest('.menu-item');
-            const slider = parent.querySelector('.slider-container');
-            if (checkbox.checked) {
-                parent.classList.add('active-glow');
-                if(slider) slider.style.display = "block";
-                const t = document.getElementById("toast");
-                t.className = "show";
-                setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
-                addLog("> " + name + " activated.");
-                playSound('beep');
-            } else {
-                parent.classList.remove('active-glow');
-                if(slider) slider.style.display = "none";
-                addLog("> " + name + " deactivated.");
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+            if (type === 'click') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); 
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'success') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); 
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
             }
         }
 
-        function addLog(msg) {
-            const box = document.getElementById('log-box');
-            box.innerHTML += "<br>" + msg;
-            box.scrollTop = box.scrollHeight;
+        function showToast(message, isEnable) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = isEnable ? `✅ เปิด: ${message}` : `❌ ปิด: ${message}`;
+            toast.style.color = isEnable ? '#2ecc71' : '#e74c3c';
+            toast.style.borderColor = isEnable ? '#2ecc71' : '#e74c3c';
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         }
 
-        function updateLevel(el, name) {
-            const levels = ["", "น้อย", "ปกติ", "โหด"];
-            el.parentElement.querySelector('.level-text').innerText = levels[el.value];
-            playSound('beep');
-            addLog("> " + name + " set to " + levels[el.value]);
+        window.onload = () => {
+            const ua = navigator.userAgent;
+            const isMobile = /Mobile|Android|iP(ad|hone)/.test(ua);
+            document.getElementById('dev-name').innerText = isMobile ? "Mobile Device" : "PC/Emulator";
+            const hwid = Array.from({length: 16}, () => Math.floor(Math.random() * 16).toString(16).toUpperCase()).join('');
+            document.getElementById('dev-hwid').innerText = hwid;
+        };
+
+        function showPage(hide, show) {
+            playSound('click');
+            document.getElementById(hide).classList.add('hidden');
+            document.getElementById(show).classList.remove('hidden');
         }
+
+        function handleFollow() {
+            playSound('click');
+            window.open("https://www.tiktok.com/@king_rooster002", "_blank");
+            const fBtn = document.getElementById('follow-btn');
+            const eBtn = document.getElementById('enter-btn');
+            fBtn.innerText = "กำลังตรวจสอบ...";
+            setTimeout(() => {
+                fBtn.innerText = "✅ ติดตามแล้ว"; fBtn.style.background = "#27ae60";
+                eBtn.classList.add('unlocked'); playSound('success');
+            }, 3000);
+        }
+
+        function checkKey() {
+            const k = document.getElementById('key-input').value;
+            if(k === "KING-ROOSTER-V4-ULTIMATE-2026" || k === "Key-2026-Free-V0.1") {
+                showPage('page-key', 'page-perm');
+                showToast("Unlimited Key Verified!", true);
+            } else { alert("คีย์ไม่ถูกต้อง!"); }
+        }
+
+        function startLoading() {
+            showPage('page-perm', 'page-loading');
+            const log = document.getElementById('matrix-log');
+            const bar = document.getElementById('bar-1');
+            const pct = document.getElementById('pct-1');
+            const lines = ["> Locating: com.dts.freefireth...", "> Opening: /Android/data/...", "> Bypassing: Security_Check...", "> Injecting: Headshot_Script...", "> Patching: Smooth_Drag.lua...", "> SUCCESS: System Injected"];
+            let i = 0, p = 0;
+            const timer = setInterval(() => {
+                if(p < 100) {
+                    p += 2; bar.style.width = p + "%"; pct.innerText = p + "%";
+                    if(p % 18 == 0 && i < lines.length) { 
+                        log.innerHTML += lines[i++] + "<br>"; 
+                        log.scrollTop = log.scrollHeight;
+                        playSound('click'); 
+                    }
+                } else { clearInterval(timer); setTimeout(startNetworkCheck, 800); }
+            }, 50);
+        }
+
+        function startNetworkCheck() {
+            showPage('page-loading', 'page-netcheck');
+            const bar = document.getElementById('bar-2');
+            const pct = document.getElementById('pct-2');
+            let p = 0;
+            const timer = setInterval(() => {
+                if(p < 100) { p++; bar.style.width = p + "%"; pct.innerText = p + "%"; } 
+                else { clearInterval(timer); playSound('success'); setTimeout(() => showPage('page-netcheck', 'page-menu'), 800); }
+            }, 30); 
+        }
+
+        function toggleFeature(name, checkbox) { playSound('click'); showToast(name, checkbox.checked); }
+        function toggleSub(id, toggle) { document.getElementById(id).classList.toggle('hidden', !toggle.checked); }
+        function setActive(btn) { playSound('click'); btn.parentElement.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+        function toggleRGB() { playSound('success'); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('rgb-active')); }
+        function toggleLaptopMode() { playSound('click'); const p = document.getElementById('page-menu'); p.classList.toggle('laptop-mode'); showToast(p.classList.contains('laptop-mode') ? "Laptop Mode" : "Normal Mode", true); }
     </script>
 </body>
-                                                                                                                                                                   </html>
-    
+    </html>
+                                     
