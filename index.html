@@ -3,260 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KING ROOSTER V4 - ULTIMATE EDITION</title>
+    <title>KING👑 V5 FINAL - COMPACT SIZE</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; user-select: none; }
-        body { margin: 0; padding: 0; background: #0b0e14; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; overflow: hidden; }
+        body { margin: 0; padding: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; overflow: hidden; }
         
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('./4446.png') no-repeat center center; background-size: cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; transition: 0.5s;
+        }
+        #loading-screen::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: -1; }
+        .loader-logo { font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite; }
+        .loader-bar { width: 200px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid #333; }
+        .loader-progress { width: 0%; height: 100%; background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); background-size: 200%; animation: moveGradient 2s linear infinite; }
+        .loader-text { margin-top: 15px; font-size: 14px; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes moveGradient { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+        /* Main Panel */
+        #floating-icon {
+            position: fixed; top: 20px; right: 20px; width: 55px; height: 55px;
+            background: #111; border: 2px solid #00ff00; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px; cursor: pointer; z-index: 9999; box-shadow: 0 0 15px #00ff00;
+        }
+
         .panel { 
-            background: linear-gradient(145deg, #0d1b2a, #1b263b); 
-            width: 360px; border-radius: 20px; padding: 25px 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
-            border: 1px solid rgba(76, 161, 175, 0.3); text-align: center; position: relative; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: url('./4446.png') no-repeat center center; background-size: cover;
+            width: 420px; 
+            height: 350px; /* ย่อความสูงรวมลงให้กระชับครับ */
+            border-radius: 12px; display: none; flex-direction: column; position: relative; 
+            border: 1px solid #444; overflow: hidden; transition: 0.3s;
         }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 0; }
+        .panel > * { z-index: 1; }
 
-        /* 🌈 โหมด ขอบไฟสายรุ้ง (RGB) */
         @keyframes rgbGlow {
-            0% { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
-            33% { box-shadow: 0 0 20px #00ff00; border-color: #00ff00; }
-            66% { box-shadow: 0 0 20px #0000ff; border-color: #0000ff; }
-            100% { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
+            0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+            33% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
+            66% { border-color: #0000ff; box-shadow: 0 0 10px #0000ff; }
+            100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
         }
-        .rgb-active { animation: rgbGlow 3s linear infinite !important; }
+        .rgb-active { animation: rgbGlow 3s linear infinite !important; border-width: 2px; }
+        .laptop-mode { transform: scale(0.75); }
 
-        /* 🖥️ โหมด Laptop (ขนาดเล็ก) */
-        .laptop-mode { transform: scale(0.75); width: 320px !important; }
-        .laptop-mode .menu-item { padding: 10px !important; font-size: 13px; }
-        .laptop-mode h2 { font-size: 18px !important; }
+        .header { height: 45px; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header-left { display: flex; gap: 8px; }
+        .header-title { font-size: 16px; font-weight: bold; color: #ffd700; text-shadow: 0 0 5px #000; }
+        .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; width: 30px; height: 30px; border-radius: 5px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 14px; }
+
+        .main-body { display: flex; flex: 1; overflow: hidden; } /* ล็อก body ไม่ให้หลุด */
+        
+        .sidebar { 
+            width: 110px; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; 
+            padding: 10px; gap: 6px; border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        .side-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 5px; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 6px; text-align: center; transition: 0.2s; }
+        .side-btn.active { background: #00ff00; color: #000; border: 1px solid #00ff00; }
+
+        /* ส่วนที่ย่อให้พอดีกับ Tab ครับ */
+        .content { 
+            flex: 1; padding: 12px; 
+            overflow-y: auto; /* ถ้าของเยอะจะเลื่อนได้เองในกรอบ */
+            background: rgba(0,0,0,0.2); 
+            max-height: 100%; 
+        }
+
+        .menu-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; text-shadow: 1px 1px 2px #000; }
+        
+        .range-box { margin: 5px 0 10px 0; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 8px; border-left: 3px solid #00ff00; display: none; }
+        .slider-range { -webkit-appearance: none; width: 100%; height: 4px; background: #444; border-radius: 5px; outline: none; margin: 8px 0; }
+        .slider-range::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #00ff00; border-radius: 50%; cursor: pointer; }
+
+        .switch { position: relative; width: 34px; height: 18px; display: inline-block; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; transition: 0.4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; transition: 0.4s; border-radius: 50%; }
+        input:checked + .slider { background: #00ff00; }
+        input:checked + .slider:before { transform: translateX(16px); }
 
         .hidden { display: none !important; }
-
-        /* ปุ่มบนหัว */
-        .header-btn { position: absolute; top: 15px; background: rgba(0, 0, 0, 0.5); width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 20px; cursor: pointer; transition: 0.2s; z-index: 100; }
-        .discord-btn { right: 15px; color: #4ca1af; text-decoration: none; }
-        .laptop-btn { left: 15px; color: white; }
-
-        .status-container { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 5px; margin: 10px 0 15px 0; overflow: hidden; white-space: nowrap; border: 1px solid rgba(46, 204, 113, 0.2); }
-        .status-text { display: inline-block; color: #2ecc71; font-size: 11.5px; animation: marquee 15s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        button { width: 100%; margin: 10px 0; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-follow { background: #ff0050; color: white; }
-        .btn-enter { background: #34495e; color: rgba(255,255,255,0.3); pointer-events: none; }
-        .btn-enter.unlocked { background: #2ecc71; color: white; pointer-events: auto; }
-        .btn-login { background: #4ca1af; color: white; }
-        .btn-allow { background: #2ecc71; color: white; }
-
-        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #4ca1af; background: rgba(0,0,0,0.2); color: white; text-align: center; }
-
-        .load-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        .load-bar-fill { width: 0%; height: 100%; background: #2ecc71; transition: 0.1s; }
-
-        .menu-item { background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 15px; margin: 10px 0 5px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .sub-menu { background: rgba(0, 0, 0, 0.3); margin-bottom: 15px; padding: 10px; border-radius: 0 0 15px 15px; border: 1px solid rgba(76, 161, 175, 0.2); display: flex; justify-content: space-around; }
-        .sub-btn { background: #2c3e50; border: none; color: white; padding: 5px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; }
-        .sub-btn.active { background: #e74c3c; box-shadow: 0 0 8px #e74c3c; }
-
-        .switch { position: relative; width: 42px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: 0.4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #2ecc71; }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        #matrix-log { font-family: monospace; font-size: 11px; color: #00ff00; text-align: left; height: 100px; background: rgba(0,0,0,0.5); padding: 10px; margin-bottom: 10px; border: 1px solid #00ff0033; overflow-y: auto; }
-        
-        .hwid-box { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; border: 1px dashed #4ca1af; font-size: 11px; color: #bdc3c7; margin-bottom: 15px; text-align: left; line-height: 1.5; }
-        .hwid-box span { color: #4ca1af; font-weight: bold; }
-
-        .credit { font-size: 11px; color: #4ca1af; margin-top: 15px; opacity: 0.7; }
-
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(13, 27, 42, 0.9); color: #2ecc71; border: 1px solid #2ecc71; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); animation: fadeInOut 2s forwards; }
-        @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(-20px); } 15% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } }
+        .show-block { display: block !important; }
+        .info-text { font-size: 12px; line-height: 1.8; color: #fff; }
     </style>
 </head>
-<body>
+<body onload="startLoading()">
 
-    <div id="toast-container"></div>
-
-    <div id="page-tiktok" class="panel">
-        <h2 style="color: #ff0050;">🔐 UNLOCK V4</h2>
-        <button class="btn-follow" id="follow-btn" onclick="handleFollow()">กดติดตามช่อง TikTok</button>
-        <button class="btn-enter" id="enter-btn" onclick="showPage('page-tiktok', 'page-key')">เข้าใช้พาแนล</button>
-        <div class="credit">@king_rooster002</div>
+    <div id="loading-screen">
+        <div class="loader-logo">👑</div>
+        <div class="loader-bar"><div class="loader-progress" id="progress"></div></div>
+        <div class="loader-text" id="status">INITIALIZING... 0%</div>
     </div>
 
-    <div id="page-key" class="panel hidden">
-        <h2>🔑 ENTER KEY</h2>
-        <div class="hwid-box">
-            DEVICE: <span id="dev-name">Checking...</span><br>
-            HWID: <span id="dev-hwid">Checking...</span><br>
-            STATUS: <span style="color:#2ecc71;">SECURE ✅</span>
-        </div>
-        <input type="text" id="key-input" placeholder="ใส่คีย์ของคุณ">
-        <button class="btn-login" onclick="checkKey()">ยืนยันคีย์</button>
-    </div>
+    <div id="floating-icon" class="hidden" onclick="togglePanel(false)">👑</div>
 
-    <div id="page-perm" class="panel hidden">
-        <div style="font-size: 45px;">📁</div>
-        <h3>สิทธิ์การเข้าถึงไฟล์</h3>
-        <p style="font-size: 11px; color:#bdc3c7;">/Android/data/com.dts.freefireth/</p>
-        <button class="btn-allow" onclick="startLoading()">อนุญาต (Allow Access)</button>
-    </div>
-
-    <div id="page-loading" class="panel hidden">
-        <h3 style="color:#00ff00;">INSTALLING SYSTEM...</h3>
-        <div id="matrix-log"></div>
-        <div class="load-bar-bg"><div id="bar-1" class="load-bar-fill"></div></div>
-        <div id="pct-1" style="font-size: 18px; color:#00ff00; font-weight:bold;">0%</div>
-    </div>
-
-    <div id="page-netcheck" class="panel hidden">
-        <h3 id="net-status" style="color:#4ca1af;">ANALYZING SPEED...</h3>
-        <div id="net-desc" style="font-size: 12px; color:#bdc3c7;">เชื่อมต่อผ่าน: <span id="conn-type">...</span></div>
-        <div class="load-bar-bg"><div id="bar-2" class="load-bar-fill" style="background:#4ca1af;"></div></div>
-        <div id="pct-2" style="font-size: 18px; color:#4ca1af; font-weight:bold;">0%</div>
-        <div id="speed-label" style="font-size: 11px; margin-top: 5px;"></div>
-    </div>
-
-    <div id="page-menu" class="panel hidden">
-        <div class="header-btn laptop-btn" onclick="toggleLaptopMode()">🖥️</div>
-        <a href="https://discord.gg/K6DSqUPbh" target="_blank" class="header-btn discord-btn">🌐</a>
-
-        <h2 style="color: #4ca1af; margin: 0; font-size: 22px;">KING ROOSTER V4</h2>
-        <div class="status-container">
-            <div class="status-text">: สถานะ : ✅ : จะอัพเดทV5วันที่ : 25/4/2026 ติดตามข่าวสารได้ที่ทางดิสคอร์ด หรือ รูป🌐 ด้านบน</div>
-        </div>
-        
-        <button style="background: #8e44ad; color: white; padding: 10px; margin-top:0;" onclick="toggleRGB()">🌈 เปิด/ปิด โหมด ขอบไฟสายรุ้ง (RGB)</button>
-
-        <div class="menu-item">
-            <span>ดูดหัว (Smooth Lock)</span>
-            <label class="switch"><input type="checkbox" onchange="toggleFeature('ดูดหัว', this); toggleSub('aim-sub', this)"><span class="slider"></span></label>
-        </div>
-        <div id="aim-sub" class="sub-menu hidden">
-            <button class="sub-btn" onclick="setActive(this)">น้อย</button><button class="sub-btn active" onclick="setActive(this)">ปกติ</button><button class="sub-btn" onclick="setActive(this)">โหด</button>
+    <div class="panel" id="main-panel">
+        <div class="header">
+            <div class="header-left">
+                <button class="nav-btn" onclick="toggleLaptopMode()">🖥️</button>
+                <button class="nav-btn" onclick="window.open('https://discord.gg/K6DSqUPbh')">🌐</button>
+            </div>
+            <div class="header-title">KING👑 V5</div>
+            <div class="header-right">
+                <button class="nav-btn" style="background: #ff3333; border: none;" onclick="togglePanel(true)">➖</button>
+            </div>
         </div>
 
-        <div class="menu-item">
-            <span>ช่วยลาก (Smooth Drag)</span>
-            <label class="switch"><input type="checkbox" onchange="toggleFeature('ช่วยลาก', this); toggleSub('drag-sub', this)"><span class="slider"></span></label>
-        </div>
-        <div id="drag-sub" class="sub-menu hidden">
-            <button class="sub-btn" onclick="setActive(this)">น้อย</button><button class="sub-btn active" onclick="setActive(this)">ปกติ</button><button class="sub-btn" onclick="setActive(this)">โหด</button>
-        </div>
+        <div class="main-body">
+            <div class="sidebar">
+                <button class="side-btn active" onclick="showTab('tab-shoot', this)">การยิง</button>
+                <button class="side-btn" onclick="showTab('tab-safe', this)">ความปลอดภัย</button>
+                <button class="side-btn" onclick="showTab('tab-info', this)">ข้อมูล</button>
+                <button class="side-btn" style="color: #ffd700;" onclick="showTab('tab-ui', this)">UI</button>
+            </div>
 
-        <div class="menu-item"><span>ล็อกหัว (Aim Assist) 5%</span><label class="switch"><input type="checkbox" onchange="toggleFeature('ล็อกหัว 5%', this)"><span class="slider"></span></label></div>
-        <div class="menu-item"><span>กันดำ (Anti-Blacklist)</span><label class="switch"><input type="checkbox" onchange="toggleFeature('กันดำ', this)"><span class="slider"></span></label></div>
-        <div class="menu-item"><span>กันแบน (Safe Bypass)</span><label class="switch"><input type="checkbox" checked onchange="toggleFeature('กันแบน', this)"><span class="slider"></span></label></div>
+            <div class="content">
+                <div id="tab-shoot">
+                    <div class="menu-item"><span>บายพาส (Bypass)</span><label class="switch"><input type="checkbox" onchange="playBeep(600, 0.1)"><span class="slider"></span></label></div>
+                    
+                    <div class="menu-item"><span>ดูดหัว 75%</span><label class="switch"><input type="checkbox" id="aim-toggle" onchange="toggleRange('aim-toggle', 'aim-range-box')"><span class="slider"></span></label></div>
+                    <div id="aim-range-box" class="range-box">
+                        <div style="font-size: 10px; color: #00ff00; display: flex; justify-content: space-between;"><span>Power</span><span id="aim-val">50%</span></div>
+                        <input type="range" min="1" max="100" value="50" class="slider-range" oninput="updateRange(this, 'aim-val')">
+                    </div>
 
-        <div class="credit">เครดิต : king_rooster002</div>
+                    <div class="menu-item"><span>ล็อกหัว 5%</span><label class="switch"><input type="checkbox" onchange="playBeep(450, 0.1)"><span class="slider"></span></label></div>
+
+                    <div class="menu-item"><span>จอลื่น (Smooth)</span><label class="switch"><input type="checkbox" id="smooth-toggle" onchange="toggleRange('smooth-toggle', 'smooth-range-box')"><span class="slider"></span></label></div>
+                    <div id="smooth-range-box" class="range-box">
+                        <div style="font-size: 10px; color: #00ff00; display: flex; justify-content: space-between;"><span>Sensitivity</span><span id="smooth-val">50%</span></div>
+                        <input type="range" min="1" max="100" value="50" class="slider-range" oninput="updateRange(this, 'smooth-val')">
+                    </div>
+                </div>
+
+                <div id="tab-safe" class="hidden">
+                    <div class="menu-item"><span>กันแบน (Active)</span><label class="switch"><input type="checkbox" checked onchange="playBeep(400, 0.1)"><span class="slider"></span></label></div>
+                    <div class="menu-item"><span>กันดำ (Anti-Black)</span><label class="switch"><input type="checkbox" onchange="playBeep(400, 0.1)"><span class="slider"></span></label></div>
+                </div>
+
+                <div id="tab-info" class="hidden">
+                    <div class="info-text">
+                        📱 <span id="phone-model">...</span><br>
+                        🆔 <span style="color:#ffd700;">KING V5 FINAL</span><br>
+                        👑 <span style="color:#00ff00;">king_rooster002</span><br>
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;">
+                        <span style="font-size: 11px;">"เสร็จสิ้นเวอร์ชันนี้แล้วรอตัวใหม่"</span>
+                    </div>
+                </div>
+
+                <div id="tab-ui" class="hidden">
+                    <div class="menu-item"><span>RGB Mode</span><label class="switch"><input type="checkbox" id="rgb-toggle" onchange="toggleRGB(); playBeep(500, 0.1);"><span class="slider"></span></label></div>
+                    <input type="color" id="ui-color-picker" style="width:100%; height:25px; cursor:pointer;" value="#000088">
+                    <button style="width:100%; margin-top:5px; background:#00ff00; border:none; padding:6px; border-radius:5px; font-weight:bold; cursor:pointer; font-size: 12px;" onclick="applyColor()">SAVE COLOR</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
+        function startLoading() {
+            let prg = document.getElementById('progress');
+            let status = document.getElementById('status');
+            let width = 0;
+            let id = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(id);
+                    status.innerText = "READY!";
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('loading-screen').style.display = 'none';
+                            document.getElementById('main-panel').style.display = 'flex';
+                        }, 500);
+                    }, 400);
+                } else {
+                    width += 2;
+                    prg.style.width = width + '%';
+                    status.innerText = "LOADING... " + width + "%";
+                }
+            }, 40);
+        }
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(type) {
+        function playBeep(freq, duration) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-            if (type === 'click') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); 
-                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-            } else if (type === 'success') {
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); 
-                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
-            }
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
         }
 
-        function showToast(message, isEnable) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = isEnable ? `✅ เปิด: ${message}` : `❌ ปิด: ${message}`;
-            toast.style.color = isEnable ? '#2ecc71' : '#e74c3c';
-            toast.style.borderColor = isEnable ? '#2ecc71' : '#e74c3c';
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+        function toggleRange(switchId, boxId) {
+            const isChecked = document.getElementById(switchId).checked;
+            document.getElementById(boxId).classList.toggle('show-block', isChecked);
+            playBeep(isChecked ? 600 : 300, 0.1);
         }
 
-        window.onload = () => {
-            const ua = navigator.userAgent;
-            const isMobile = /Mobile|Android|iP(ad|hone)/.test(ua);
-            document.getElementById('dev-name').innerText = isMobile ? "Mobile Device" : "PC/Emulator";
-            const hwid = Array.from({length: 16}, () => Math.floor(Math.random() * 16).toString(16).toUpperCase()).join('');
-            document.getElementById('dev-hwid').innerText = hwid;
-        };
-
-        function showPage(hide, show) {
-            playSound('click');
-            document.getElementById(hide).classList.add('hidden');
-            document.getElementById(show).classList.remove('hidden');
+        function updateRange(el, targetId) {
+            document.getElementById(targetId).innerText = el.value + "%";
+            playBeep(150 + (el.value * 2), 0.02);
         }
 
-        function handleFollow() {
-            playSound('click');
-            window.open("https://www.tiktok.com/@king_rooster002", "_blank");
-            const fBtn = document.getElementById('follow-btn');
-            const eBtn = document.getElementById('enter-btn');
-            fBtn.innerText = "กำลังตรวจสอบ...";
-            setTimeout(() => {
-                fBtn.innerText = "✅ ติดตามแล้ว"; fBtn.style.background = "#27ae60";
-                eBtn.classList.add('unlocked'); playSound('success');
-            }, 3000);
+        function showTab(tabId, btn) {
+            playBeep(500, 0.05);
+            document.getElementById('tab-shoot').classList.add('hidden');
+            document.getElementById('tab-safe').classList.add('hidden');
+            document.getElementById('tab-info').classList.add('hidden');
+            document.getElementById('tab-ui').classList.add('hidden');
+            document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            btn.classList.add('active');
         }
 
-        function checkKey() {
-            const k = document.getElementById('key-input').value;
-            // เปลี่ยนเป็นคีย์ใหม่ที่พี่ต้องการแล้วครับ
-            if(k === "KING-VIP-6K7O") {
-                showPage('page-key', 'page-perm');
-                showToast("ยินดีต้อนรับ! คีย์ VIP ได้รับการยืนยัน", true);
-                playSound('success');
-            } else { alert("คีย์ไม่ถูกต้อง! กรุณาลองใหม่อีกครั้ง"); }
+        function applyColor() {
+            playBeep(700, 0.1);
+            const panel = document.getElementById('main-panel');
+            panel.style.backgroundImage = "none";
+            panel.style.backgroundColor = document.getElementById('ui-color-picker').value;
         }
 
-        function startLoading() {
-            showPage('page-perm', 'page-loading');
-            const log = document.getElementById('matrix-log');
-            const bar = document.getElementById('bar-1');
-            const pct = document.getElementById('pct-1');
-            const lines = ["> Locating: com.dts.freefireth...", "> Opening: /Android/data/...", "> Bypassing: Security_Check...", "> Injecting: Headshot_Script...", "> Patching: Smooth_Drag.lua...", "> SUCCESS: System Injected"];
-            let i = 0, p = 0;
-            const timer = setInterval(() => {
-                if(p < 100) {
-                    p += 2; bar.style.width = p + "%"; pct.innerText = p + "%";
-                    if(p % 18 == 0 && i < lines.length) { 
-                        log.innerHTML += lines[i++] + "<br>"; 
-                        log.scrollTop = log.scrollHeight;
-                        playSound('click'); 
-                    }
-                } else { clearInterval(timer); setTimeout(startNetworkCheck, 800); }
-            }, 50);
+        function toggleRGB() {
+            document.getElementById('main-panel').classList.toggle('rgb-active', document.getElementById('rgb-toggle').checked);
         }
 
-        function startNetworkCheck() {
-            showPage('page-loading', 'page-netcheck');
-            const bar = document.getElementById('bar-2');
-            const pct = document.getElementById('pct-2');
-            let p = 0;
-            const timer = setInterval(() => {
-                if(p < 100) { p++; bar.style.width = p + "%"; pct.innerText = p + "%"; } 
-                else { clearInterval(timer); playSound('success'); setTimeout(() => showPage('page-netcheck', 'page-menu'), 800); }
-            }, 30); 
+        function toggleLaptopMode() {
+            playBeep(450, 0.1);
+            document.getElementById('main-panel').classList.toggle('laptop-mode');
         }
 
-        function toggleFeature(name, checkbox) { playSound('click'); showToast(name, checkbox.checked); }
-        function toggleSub(id, toggle) { document.getElementById(id).classList.toggle('hidden', !toggle.checked); }
-        function setActive(btn) { playSound('click'); btn.parentElement.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-        function toggleRGB() { playSound('success'); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('rgb-active')); }
-        function toggleLaptopMode() { playSound('click'); const p = document.getElementById('page-menu'); p.classList.toggle('laptop-mode'); showToast(p.classList.contains('laptop-mode') ? "Laptop Mode" : "Normal Mode", true); }
+        function togglePanel(isMin) {
+            document.getElementById('main-panel').classList.toggle('hidden', isMin);
+            document.getElementById('floating-icon').classList.toggle('hidden', !isMin);
+            playBeep(isMin ? 300 : 600, 0.1);
+        }
+
+        document.getElementById('phone-model').innerText = navigator.userAgent.includes("Android") ? navigator.userAgent.split(";")[2].split("Build")[0].trim() : "Mobile Device";
     </script>
 </body>
     </html>
-            
+    
